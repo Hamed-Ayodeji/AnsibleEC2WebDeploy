@@ -5,11 +5,11 @@
 - name: Delete route table
   amazon.aws.ec2_vpc_route_table:
     state: absent
-    route_table_id: "{{ public_route_table_id }}"
     vpc_id: "{{ vpc_id }}"
     region: "{{ region }}"
     aws_access_key: "{{ aws_access_key }}"
     aws_secret_key: "{{ aws_secret_key }}"
+    route_table_id: "{{ public_route_table_id }}"
 
 - name: Delete internet gateway
   amazon.aws.ec2_vpc_igw:
@@ -35,3 +35,4 @@
     region: "{{ region }}"
     aws_access_key: "{{ aws_access_key }}"
     aws_secret_key: "{{ aws_secret_key }}"
+  ignore_errors: true
