@@ -12,8 +12,8 @@
   roles:
     - { role: destroy_ec2, tags: ["ec2"] }
     - { role: destroy_keypair, tags: ["keypair"] }
-    - { role: destroy_vpc, tags: ["vpc"] }
     - { role: destroy_sg, tags: ["sg"] }
+    - { role: destroy_vpc, tags: ["vpc"] }
 
   vars_files:
     - vars/main.yml

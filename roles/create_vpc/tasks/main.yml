@@ -23,6 +23,17 @@
         var: vpc_id.vpc.id
       when: vpc_id is success
 
+    - name: Save VPC ID as a fact
+      set_fact:
+        vpc_id: "{{ vpc_id.vpc.id }}"
+
+    - name: Update VPC ID in variable file
+      lineinfile:
+        path: "{{ root_dir }}/vars/main.yml"
+        regexp: '^vpc_id:'
+        line: "vpc_id: '{{ vpc_id }}'"
+
+
   rescue:
     - name: Display error
       debug:
@@ -124,6 +135,16 @@
       debug:
         var: public_route_table.route_table.id
       when: public_route_table is success
+
+    - name: Save route table ID as a fact
+      set_fact:
+        public_route_table: "{{ public_route_table.route_table.id }}"
+
+    - name: Update route table ID in variable file
+      lineinfile:
+        path: "{{ root_dir }}/vars/main.yml"
+        regexp: '^public_route_table_id:'
+        line: "public_route_table_id: '{{ public_route_table_id }}'"
 
   rescue:
     - name: Display error
