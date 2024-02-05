@@ -1,0 +1,11 @@
+---
+
+# this role removes the security group
+
+- name: Delete security group
+  amazon.aws.ec2_group:
+    name: "{{ project_name }}-sg"
+    region: "{{ region }}"
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    state: absent

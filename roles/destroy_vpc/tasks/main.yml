@@ -1,0 +1,35 @@
+---
+
+# this role destroys the VPC and all its associated resources
+
+- name: Delete route table
+  amazon.aws.ec2_vpc_route_table:
+    state: absent
+    route_table_id: "{{ public_route_table.route_table.id }}"
+    region: "{{ region }}"
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+
+- name: Delete internet gateway
+  amazon.aws.ec2_vpc_igw:
+    state: absent
+    igw_id: "{{ igw.gateway_id }}"
+    region: "{{ region }}"
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+
+- name: Delete public subnet
+  amazon.aws.ec2_vpc_subnet:
+    state: absent
+    subnet_id: "{{ public_subnet.subnet.id }}"
+    region: "{{ region }}"
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+
+- name: Delete VPC
+  amazon.aws.ec2_vpc_net:
+    state: absent
+    vpc_id: "{{ vpc_id.vpc.id }}"
+    region: "{{ region }}"
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"

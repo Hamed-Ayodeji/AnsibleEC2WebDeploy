@@ -1,0 +1,16 @@
+---
+
+# this role removes the key-pair
+
+- name: Delete key pair
+  amazon.aws.ec2_key:
+    name: "{{ project_name }}-key"
+    region: "{{ region }}"
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    state: absent
+
+- name: Delete local private key file
+  ansible.builtin.file:
+    path: "{{ root_dir }}/{{ project_name }}-key.pem"
+    state: absent

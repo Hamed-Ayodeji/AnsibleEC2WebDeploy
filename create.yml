@@ -9,10 +9,10 @@
   become_user: "{{ localUser }}"
   become: true
   roles:
-    - { role: vpc, tags: ["vpc"] }
-    - { role: sg, tags: ["sg"] }
-    - { role: keypair, tags: ["keypair"] }
-    - { role: ec2, tags: ["ec2"] }
+    - { role: create_vpc, tags: ["vpc"] }
+    - { role: create_sg, tags: ["sg"] }
+    - { role: create_keypair, tags: ["keypair"] }
+    - { role: create_ec2, tags: ["ec2"] }
   vars_files:
     - vars/main.yml
     - vars/aws_credentials.yml
@@ -24,8 +24,9 @@
   remote_user: ec2-user
   become: true
   roles:
-    - { role: apache, tags: ["apache"] }
+    - { role: install_apache, tags: ["apache"] }
   vars_files:
     - vars/main.yml
     - vars/aws_credentials.yml
+    
 #######################################################################################

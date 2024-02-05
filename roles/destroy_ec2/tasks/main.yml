@@ -1,0 +1,16 @@
+---
+
+# this role terminates the ec2 instance
+
+- name: Terminate EC2 instance
+  amazon.aws.ec2_instance:
+    state: absent
+    instance_ids: "{{ ec2.instances[0].instance_id }}"
+    region: "{{ region }}"
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+  register: result
+
+- name: Display the result
+  debug:
+    var: result

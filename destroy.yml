@@ -1,0 +1,20 @@
+---
+
+# this is the main playbook that will be executed
+
+#### PLAY 1 ###########################################################################
+
+- name: Create the ec2 instance
+  hosts: localhost
+  gather_facts: true
+  become_user: "{{ localUser }}"
+  become: true
+  roles:
+    - { role: destroy_ec2, tags: ["ec2"] }
+    - { role: destroy_keypair, tags: ["keypair"] }
+    - { role: destroy_vpc, tags: ["vpc"] }
+    - { role: destroy_sg, tags: ["sg"] }
+
+  vars_files:
+    - vars/main.yml
+    - vars/aws_credentials.yml
