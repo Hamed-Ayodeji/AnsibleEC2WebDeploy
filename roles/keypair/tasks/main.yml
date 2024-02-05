@@ -15,17 +15,10 @@
         tags:
           Service: key
 
-    # - name: Change ownership of the private key file
-    #   ansible.builtin.file:
-    #     path: "{{ root_dir }}/{{ project_name }}-key.pem"
-    #     owner: "{{ localUser }}"
-    #     group: "{{ localUser }}"
-
-    # - name: Change permissions of the private key file
-    #   ansible.builtin.file:
-    #     path: "{{ root_dir }}/{{ project_name }}-key.pem"
-
-    #     mode: '0400'
+    - name: Change permissions of the private key file
+      ansible.builtin.file:
+        path: "{{ root_dir }}/{{ project_name }}-key.pem"
+        mode: "400"
   rescue:
     - name: Fail the play
       fail:
