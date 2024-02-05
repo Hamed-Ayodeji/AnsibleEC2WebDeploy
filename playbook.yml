@@ -1,0 +1,29 @@
+---
+
+# this is the main playbook that will be executed
+
+#### PLAY 1 ###########################################################################
+
+- name: Create the ec2 instance
+  hosts: localhost
+  gather_facts: true
+  become: true
+  roles:
+    - { role: vpc, tags: ["vpc"] }
+    - { role: sg, tags: ["sg"] }
+    - { role: keypair, tags: ["keypair"] }
+    - { role: ec2, tags: ["ec2"] }
+  vars_files:
+    - vars/main.yml
+    - vars/aws_credentials.yml
+
+#### PLAY 2 ###########################################################################
+
+- name: Install the web server
+  hosts: ec2
+  remote_user: ec2-user
+  become: true
+  roles:
+    - { role: apache, tags: ["apache"] }
+
+#######################################################################################

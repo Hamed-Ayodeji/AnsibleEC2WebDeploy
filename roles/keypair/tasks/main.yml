@@ -1,0 +1,23 @@
+---
+
+# this role generates the key-pair and saves the private-key.pem to the present working directory of the local machine
+
+- name: Generate key-pair
+  block:
+    - name: Generate key-pair
+      amazon.aws.ec2_key:
+        name: "{{ project_name }}-key"
+        region: "{{ region }}"
+        aws_access_key: "{{ aws_access_key }}"
+        aws_secret_key: "{{ aws_secret_key }}"
+        state: present
+        file_name: "{{ root_dir }}/{{ project_name }}-key.pem"
+        tags:
+          Service: key
+
+  rescue:
+    - name: Fail the play
+      fail:
+        msg: "Failed to generate key-pair"
+
+###############################################################################

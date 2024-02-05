@@ -1,0 +1,6 @@
+project_name: "ansibleEc2WebDeploy"
+vpc_cidr_block: "10.0.0.0/24"
+public_subnet_cidr_block: "10.0.0.0/28"
+region: "eu-west-1"
+instance_type: "t2.micro"
+root_dir: "/home/jacksparrow/Work/Cloud-third-semester/AnsibleEC2WebDeploy"

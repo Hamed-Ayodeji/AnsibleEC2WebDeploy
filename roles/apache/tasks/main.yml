@@ -1,0 +1,51 @@
+---
+
+# this role updates package library of the ec2 instance and installs apache2 on it
+
+- name: Update package library
+  block:
+    - name: Update package library
+      yum:
+        name: "*"
+        state: latest
+      register: update
+      tags:
+        - update
+        - packages
+  rescue:
+    - name: Display error
+      debug:
+        var: update.msg
+      when: update is failed
+
+    - name: Fail the play
+      fail:
+        msg: "Failed to update package library"
+
+###############################################################################
+
+- name: Install Apache2
+  block:
+    - name: Install Apache2
+      yum:
+        name: "httpd"
+        state: present
+      register: apache2
+      tags:
+        - install
+        - apache2
+  rescue:
+    - name: Display error
+      debug:
+        var: apache2.msg
+      when: apache2 is failed
+
+    - name: Fail the play
+      fail:
+        msg: "Failed to install Apache2"
+
+  notify: 
+    - Restart Apache2
+    - Enable Apache2
+
+###############################################################################

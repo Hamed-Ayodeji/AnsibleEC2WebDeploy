@@ -1,0 +1,138 @@
+---
+
+# this role carries all the configurations for the VPC
+
+- name: Create VPC
+  block:
+    - name: Create VPC
+      amazon.aws.ec2_vpc_net:
+        name: "{{ project_name }}-vpc"
+        cidr_block: "{{ vpc_cidr_block }}"
+        region: "{{ region }}"
+        aws_access_key: "{{ aws_access_key }}"
+        aws_secret_key: "{{ aws_secret_key }}"
+        tags:
+          Name: "{{ project_name }}-vpc"
+          Service: vpc
+
+      register: vpc_id
+      ignore_errors: true
+
+    - name: Get VPC ID
+      debug:
+        var: vpc_id.vpc.id
+      when: vpc_id is success
+
+  rescue:
+    - name: Display error
+      debug:
+        var: vpc_id.msg
+      when: vpc_id is failed
+
+    - name: Fail the play
+      fail:
+        msg: "Failed to create VPC"
+
+###############################################################################
+
+- name: Create a public subnet
+  block:
+    - name: Create public subnet
+      amazon.aws.ec2_vpc_subnet:
+        vpc_id: "{{ vpc_id.vpc.id }}"
+        cidr: "{{ public_subnet_cidr_block }}"
+        region: "{{ region }}"
+        aws_access_key: "{{ aws_access_key }}"
+        aws_secret_key: "{{ aws_secret_key }}"
+        tags:
+          Name: "{{ project_name }}-public-subnet"
+          Service: publicSubnet
+          
+      register: public_subnet
+      ignore_errors: true
+
+    - name: Get public subnet ID
+      debug:
+        var: public_subnet.subnet.id
+      when: public_subnet is success
+
+  rescue:
+    - name: Display error
+      debug:
+        var: public_subnet.msg
+      when: public_subnet is failed
+
+    - name: Fail the play
+      fail:
+        msg: "Failed to create public subnet"
+
+###############################################################################
+
+- name: Create an internet gateway
+  block:
+    - name: Create internet gateway
+      amazon.aws.ec2_vpc_igw:
+        vpc_id: "{{ vpc_id.vpc.id }}"
+        region: "{{ region }}"
+        aws_access_key: "{{ aws_access_key }}"
+        aws_secret_key: "{{ aws_secret_key }}"
+        tags:
+          Name: "{{ project_name }}-igw"
+          Service: igw
+
+      register: igw
+      ignore_errors: true
+
+    - name: Get internet gateway ID
+      debug:
+        var: igw.gateway_id
+      when: igw is success
+
+  rescue:
+    - name: Display error
+      debug:
+        var: igw.error_message
+      when: igw is failed
+
+    - name: Fail the play
+      fail:
+        msg: "Failed to create internet gateway"
+
+###############################################################################
+
+- name: Create a route table for my public subnet
+  block:
+    - name: Create route table
+      amazon.aws.ec2_vpc_route_table:
+        vpc_id: "{{ vpc_id.vpc.id }}"
+        region: "{{ region }}"
+        aws_access_key: "{{ aws_access_key }}"
+        aws_secret_key: "{{ aws_secret_key }}"
+        subnets:
+          - "{{ public_subnet.subnet.id }}"
+        routes:
+          - dest: "0.0.0.0/0"
+            gateway_id: "{{ igw.gateway_id }}"
+        tags:
+          Name: "{{ project_name }}-public-route-table"
+          Service: publicRouteTable
+
+      register: public_route_table
+      ignore_errors: true
+
+    - name: Get route table ID
+      debug:
+        var: public_route_table.route_table.id
+      when: public_route_table is success
+
+  rescue:
+    - name: Display error
+      debug:
+        var: public_route_table.msg
+      when: public_route_table is failed
+
+    - name: Fail the play
+      fail:
+        msg: "Failed to create route table"
+
+###############################################################################

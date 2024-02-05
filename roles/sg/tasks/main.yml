@@ -1,0 +1,49 @@
+---
+
+# this role creates the security group, allowing SSH and HTTP traffic ingress and all traffic egress
+
+- name: Create security group
+  block:
+    - name: Create security group
+      amazon.aws.ec2_group:
+        name: "{{ project_name }}-sg"
+        description: "Security group for {{ project_name }}-vpc"
+        vpc_id: "{{ vpc_id.vpc.id }}"
+        region: "{{ region }}"
+        aws_access_key: "{{ aws_access_key }}"
+        aws_secret_key: "{{ aws_secret_key }}"
+        rules:
+          - proto: tcp
+            from_port: 22
+            to_port: 22
+            cidr_ip: "0.0.0.0/0"
+          - proto: tcp
+            from_port: 80
+            to_port: 80
+            cidr_ip: "0.0.0.0/0"
+        rules_egress:
+          - proto: all
+            cidr_ip: "0.0.0.0/0"
+
+        tags:
+          Service: sg
+          
+      register: sg
+      ignore_errors: true
+
+    - name: Get security group ID
+      debug:
+        var: sg.group_id
+      when: sg is success
+
+  rescue:
+    - name: Display error
+      debug:
+        var: sg.msg
+      when: sg is failed
+
+    - name: Fail the play
+      fail:
+        msg: "Failed to create security group"
+
+###############################################################################

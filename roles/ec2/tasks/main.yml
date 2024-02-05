@@ -1,0 +1,90 @@
+---
+
+# this role builds the EC2 instance
+
+- name: Get the latest Amazon Linux 2 AMI
+  block:
+    - name: Get the latest Amazon Linux 2 AMI
+      amazon.aws.ec2_ami_info:
+        region: "{{ region }}"
+        aws_access_key: "{{ aws_access_key }}"
+        aws_secret_key: "{{ aws_secret_key }}"
+        owners: ["amazon"]
+        filters:
+          name: "amzn2-ami-hvm-*-x86_64-gp2"
+          root-device-type: "ebs"
+          virtualization-type: "hvm"
+          state: "available"
+      register: ami
+
+    - name: Display the latest Amazon Linux 2 AMI
+      debug:
+        var: ami.images[0].image_id
+      when: ami is success
+
+  rescue:
+    - name: Display error
+      debug:
+        var: ami.msg
+      when: ami is failed
+
+    - name: Fail the play
+      fail:
+        msg: "Failed to get the latest Amazon Linux 2 AMI"
+
+###############################################################################
+
+- name: Create EC2 instance
+  block:
+    - name: Create EC2 instance
+      amazon.aws.ec2_instance:
+        key_name: "{{ project_name }}-key"
+        instance_type: "{{ instance_type }}"
+        image_id: "{{ ami.images[0].image_id }}"
+        vpc_subnet_id: "{{ public_subnet.subnet.id }}"
+        security_groups: "{{ sg.group_id }}"
+        region: "{{ region }}"
+        aws_access_key: "{{ aws_access_key }}"
+        aws_secret_key: "{{ aws_secret_key }}"
+
+        tags:
+          Name: "{{ project_name }}-ec2"
+          Service: ec2
+          Project: "{{ project_name }}"
+
+        wait: yes
+        count: 1
+        volumes:
+          - device_name: "/dev/xvda"
+            ebs:
+              volume_size: 8
+              volume_type: "gp3"
+        network:
+          assign_public_ip: yes
+
+      register: ec2
+
+    - name: Display the public IP of the EC2 instance
+      debug:
+        var: ec2.instances[0].public_ip
+      when: ec2 is success
+
+  rescue:
+    - name: Display error
+      debug:
+        var: ec2.msg
+      when: ec2 is failed
+
+    - name: Fail the play
+      fail:
+        msg: "Failed to create EC2 instance"
+
+###############################################################################
+
+- name: Add the EC2 instance to the host group
+  add_host:
+    name: "{{ ec2.instances[0].public_ip }}"
+    groups: ec2
+  when: ec2 is success
+
+###############################################################################
