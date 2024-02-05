@@ -69,6 +69,10 @@
         var: ec2.instances[0].public_ip_address
       when: ec2 is success
 
+    - name: Save instance ID as a fact
+      set_fact:
+        instance_id: "{{ ec2.instances[0].instance_id }}"
+
   rescue:
     - name: Display error
       debug:
