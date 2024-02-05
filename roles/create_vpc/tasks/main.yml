@@ -29,7 +29,7 @@
 
     - name: Update VPC ID in variable file
       lineinfile:
-        path: "{{ root_dir }}/vars/main.yml"
+        path: vars/main.yml
         regexp: '^vpc_id:'
         line: "vpc_id: '{{ vpc_id }}'"
 
@@ -50,7 +50,7 @@
   block:
     - name: Create public subnet
       amazon.aws.ec2_vpc_subnet:
-        vpc_id: "{{ vpc_id.vpc.id }}"
+        vpc_id: "{{ vpc_id }}"
         cidr: "{{ public_subnet_cidr_block }}"
         region: "{{ region }}"
         aws_access_key: "{{ aws_access_key }}"
@@ -83,7 +83,7 @@
   block:
     - name: Create internet gateway
       amazon.aws.ec2_vpc_igw:
-        vpc_id: "{{ vpc_id.vpc.id }}"
+        vpc_id: "{{ vpc_id }}"
         region: "{{ region }}"
         aws_access_key: "{{ aws_access_key }}"
         aws_secret_key: "{{ aws_secret_key }}"
@@ -115,7 +115,7 @@
   block:
     - name: Create route table
       amazon.aws.ec2_vpc_route_table:
-        vpc_id: "{{ vpc_id.vpc.id }}"
+        vpc_id: "{{ vpc_id }}"
         region: "{{ region }}"
         aws_access_key: "{{ aws_access_key }}"
         aws_secret_key: "{{ aws_secret_key }}"
@@ -138,11 +138,11 @@
 
     - name: Save route table ID as a fact
       set_fact:
-        public_route_table: "{{ public_route_table.route_table.id }}"
+        public_route_table_id: "{{ public_route_table.route_table.id }}"
 
     - name: Update route table ID in variable file
       lineinfile:
-        path: "{{ root_dir }}/vars/main.yml"
+        path: vars/main.yml
         regexp: '^public_route_table_id:'
         line: "public_route_table_id: '{{ public_route_table_id }}'"
 

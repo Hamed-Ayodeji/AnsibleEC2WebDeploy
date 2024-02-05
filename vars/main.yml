@@ -5,6 +5,6 @@ region: "eu-west-1"
 instance_type: "t2.micro"
 root_dir: "/home/jacksparrow/Work/Cloud-third-semester/AnsibleEC2WebDeploy"
 localUser: "jacksparrow"
-instance_id: "i-0a82a8ca4578f6609"
-vpc_id: "vpc-0877992c8e9acc15b"
-public_route_table_id: "rtb-09bf99c7f50e561c4"
+instance_id: 'i-04122ec1caea85e91'
+vpc_id: 'vpc-072f7699a1d9e31ca'
+public_route_table_id: 'rtb-033fba076e95996bc'
