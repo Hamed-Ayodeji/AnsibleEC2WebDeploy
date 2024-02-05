@@ -1,5 +1,4 @@
 ---
-
 # this is the main playbook that will be executed
 
 #### PLAY 1 ###########################################################################
@@ -7,6 +6,7 @@
 - name: Create the ec2 instance
   hosts: localhost
   gather_facts: true
+  become_user: "{{ localUser }}"
   become: true
   roles:
     - { role: vpc, tags: ["vpc"] }
@@ -25,5 +25,7 @@
   become: true
   roles:
     - { role: apache, tags: ["apache"] }
-
+  vars_files:
+    - vars/main.yml
+    - vars/aws_credentials.yml
 #######################################################################################
