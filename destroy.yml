@@ -6,7 +6,7 @@
 
 - name: Create the ec2 instance
   hosts: localhost
-  gather_facts: true
+  gather_facts: false
   become_user: "{{ localUser }}"
   become: true
   roles:
