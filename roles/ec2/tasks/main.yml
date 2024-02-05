@@ -66,7 +66,7 @@
 
     - name: Display the public IP of the EC2 instance
       debug:
-        var: ec2.instances[0].public_ip
+        var: ec2.instances[0].public_ip_address
       when: ec2 is success
 
   rescue:
@@ -83,7 +83,7 @@
 
 - name: Add the EC2 instance to the host group
   add_host:
-    name: "{{ ec2.instances[0].public_ip }}"
+    name: "{{ ec2.instances[0].public_ip_address }}"
     groups: ec2
   when: ec2 is success
 
