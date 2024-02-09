@@ -2,7 +2,7 @@
 
 ## Table of Contents
 
-1. [Introduction](#1. introduction)
+1. [Introduction](#1-introduction)
 2. [Prerequisites](#2-prerequisites)
 3. [Planning](#3-planning)
 4. [Architecture](#4-architecture)
